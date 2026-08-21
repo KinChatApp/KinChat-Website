@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { SITE_CONFIG } from "@/lib/constants";
 import { Container } from "@/components/ui/Container";
-import { Menu, X, MessageSquare } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +21,13 @@ export function Navbar() {
       <Container>
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2 text-white font-bold text-xl tracking-tight">
-            <MessageSquare className="w-6 h-6 text-blue-500" />
+            <Image 
+              src="/icons/icon.svg" 
+              alt={`${SITE_CONFIG.name} Logo`} 
+              width={24} 
+              height={24} 
+              className="w-6 h-6"
+            />
             {SITE_CONFIG.name}
           </Link>
 
