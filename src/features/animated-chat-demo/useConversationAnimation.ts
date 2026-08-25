@@ -22,10 +22,6 @@ interface AnimationState {
 /**
  * Drives the whole conversation timeline: typing -> reveal -> status
  * progression -> pause -> next message -> ... -> fade out -> loop.
- *
- * All scheduling goes through a single `sleep` helper that races against an
- * "cancelled" flag, so a component unmount (or a fast-refresh in dev) never
- * leaves stray timers mutating state after the fact.
  */
 export function useConversationAnimation(script: ConversationMessage[]) {
   const [state, setState] = useState<AnimationState>({
@@ -54,8 +50,9 @@ export function useConversationAnimation(script: ConversationMessage[]) {
         for (const msg of script) {
           if (cancelledRef.current) return;
 
-          // 1. Typing indicator for this message's sender.
-          setState((s) => ({ ...s, typingSender: msg.sender }));
+          // 1. Typing indicator: Only show the bubble if the sender is "them".
+          // For "me", we just wait (simulate typing time) but don't show the UI bubble.
+          setState((s) => ({ ...s, typingSender: msg.sender === "them" ? "them" : null }));
           await sleep(msg.typingDurationMs);
           if (cancelledRef.current) return;
 

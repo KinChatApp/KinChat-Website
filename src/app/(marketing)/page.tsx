@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import {
@@ -7,13 +7,11 @@ import {
   WifiOff,
   Zap,
   BatteryCharging,
-  Check,
-  CheckCheck,
-  Clock,
 } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 import Image from "next/image";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { AnimatedChat } from "@/features/animated-chat-demo";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -25,114 +23,6 @@ const mono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-type Phase = 0 | 1 | 2 | 3 | 4 | 5;
-
-const PHASE_DURATIONS: Record<Phase, number> = {
-  0: 1200, // pause, only incoming bubble
-  1: 900, // typing indicator
-  2: 700, // outgoing bubble appears, sending
-  3: 500, // sent (single check)
-  4: 600, // delivered (double check, grey)
-  5: 2400, // read (double check, blue) — hold longest
-};
-
-function ChatDemo() {
-  const [phase, setPhase] = useState<Phase>(5);
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) {
-      setReduced(true);
-      return;
-    }
-
-    let current: Phase = 0;
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    const run = () => {
-      setPhase(current);
-      timeoutId = setTimeout(() => {
-        current = ((current + 1) % 6) as Phase;
-        run();
-      }, PHASE_DURATIONS[current]);
-    };
-
-    run();
-    return () => clearTimeout(timeoutId);
-  }, []);
-
-  const showTyping = !reduced && phase === 1;
-  const showOutgoing = reduced || phase >= 2;
-  const status = reduced
-    ? "read"
-    : phase >= 5
-    ? "read"
-    : phase >= 4
-    ? "delivered"
-    : phase >= 3
-    ? "sent"
-    : "sending";
-
-  return (
-    <div className="relative mx-auto w-[260px] sm:w-[280px]">
-      <div className="absolute -inset-8 -z-10 rounded-[3rem] bg-[radial-gradient(circle_at_50%_30%,rgba(108,99,255,0.35),transparent_70%)] blur-2xl" />
-
-      <div className="relative rounded-[2.5rem] border border-white/10 bg-gradient-to-b from-zinc-900 to-[#0A0A18] p-2 shadow-[0_30px_80px_-20px_rgba(46,46,139,0.6)]">
-        <div className="absolute left-1/2 top-3 h-1.5 w-16 -translate-x-1/2 rounded-full bg-black/60" />
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/5 bg-[#0D0D1F]">
-          <div className="flex items-center gap-2 border-b border-white/5 px-4 pb-3 pt-8">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600" />
-            <div>
-              <p className="text-xs font-semibold text-white">Ryan Carter</p>
-              <p className={`${mono.className} text-[10px] text-emerald-400`}>
-                online
-              </p>
-            </div>
-          </div>
-
-          <div className="flex min-h-[220px] flex-col justify-end gap-2 px-3 py-4">
-            <div className="max-w-[75%] rounded-2xl rounded-bl-sm bg-zinc-800 px-3 py-2 text-[12px] text-zinc-200">
-              Are you coming tomorrow?
-            </div>
-
-            {showTyping && (
-              <div className="ml-auto flex w-fit items-center gap-1 rounded-2xl rounded-br-sm bg-indigo-600/40 px-3 py-2">
-                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-200 [animation-delay:-0.2s]" />
-                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-200 [animation-delay:-0.1s]" />
-                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-200" />
-              </div>
-            )}
-
-            {showOutgoing && (
-              <div className="ml-auto flex max-w-[75%] flex-col items-end gap-1">
-                <div className="rounded-2xl rounded-br-sm bg-indigo-600 px-3 py-2 text-[12px] text-white">
-                  Yes, see you at 6!
-                </div>
-                <div
-                  className={`${mono.className} flex items-center gap-1 pr-1 text-[9px] text-zinc-500`}
-                >
-                  <span>6:04 PM</span>
-                  {status === "sending" && <Clock className="h-3 w-3" />}
-                  {status === "sent" && <Check className="h-3 w-3" />}
-                  {status === "delivered" && (
-                    <CheckCheck className="h-3 w-3 text-zinc-400" />
-                  )}
-                  {status === "read" && (
-                    <CheckCheck className="h-3 w-3 text-sky-400" />
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// এখানে ৩টি ছবি এবং তাদের রোটেশন আপডেট করা হয়েছে
 const screenshots = [
   { src: "/screenshots/homepage.webp", alt: "KinChat chat list", rotate: "md:-rotate-3" },
   { src: "/screenshots/contact.webp", alt: "KinChat contacts", rotate: "md:rotate-0" },
@@ -200,8 +90,23 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex justify-center">
-              <ChatDemo />
+            {/* Chat Demo Device Frame */}
+            <div className="flex justify-center relative mt-16 md:mt-0">
+              <div className="relative mx-auto w-full max-w-[360px]">
+                {/* Glow behind device */}
+                <div className="absolute -inset-8 -z-10 rounded-[3rem] bg-[radial-gradient(circle_at_50%_50%,rgba(108,99,255,0.35),transparent_65%)] blur-2xl" />
+
+                {/* Outer Bezel */}
+                <div className="relative rounded-[2.5rem] border border-white/10 bg-gradient-to-b from-zinc-900 to-[#0A0A18] p-2 shadow-[0_30px_80px_-20px_rgba(46,46,139,0.7)]">
+                  {/* Top Notch */}
+                  <div className="absolute left-1/2 top-3 z-20 h-1.5 w-16 -translate-x-1/2 rounded-full bg-black/60" />
+
+                  {/* Inner Screen */}
+                  <div className="relative w-full overflow-hidden rounded-[2rem] border border-white/5 bg-[#0b0e17] [&>div]:!shadow-none [&>div]:!border-none [&>div]:!rounded-none [&>div]:!h-[600px] [&>div]:!min-h-0 [&>div]:!max-h-none">
+                    <AnimatedChat />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </Container>
@@ -252,10 +157,8 @@ export default function Home() {
                 key={src}
                 className={`group relative flex-none w-[260px] snap-center transition-all duration-500 ease-out hover:-translate-y-4 hover:scale-[1.05] hover:rotate-0 hover:z-10 md:w-[300px] ${rotate}`}
               >
-                {/* Advanced glow animation behind the screenshot */}
                 <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-[radial-gradient(circle_at_50%_40%,rgba(108,99,255,0.25),transparent_70%)] blur-2xl transition-all duration-500 group-hover:scale-110 group-hover:bg-[radial-gradient(circle_at_50%_40%,rgba(108,99,255,0.5),transparent_70%)]" />
-                
-                {/* Main device frame with enhanced shadow on hover */}
+
                 <div className="relative aspect-[1/2.2] rounded-[2.5rem] border border-white/10 bg-gradient-to-b from-zinc-900 to-[#0A0A18] p-2 shadow-[0_30px_80px_-20px_rgba(46,46,139,0.5)] transition-shadow duration-500 group-hover:shadow-[0_40px_100px_-20px_rgba(108,99,255,0.7)]">
                   <div className="absolute left-1/2 top-3 z-20 h-1.5 w-16 -translate-x-1/2 rounded-full bg-black/60" />
                   <div className="relative h-full w-full overflow-hidden rounded-[2rem] border border-white/5 bg-zinc-950">
