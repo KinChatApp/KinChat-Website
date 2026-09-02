@@ -11,17 +11,17 @@ export default function Features() {
   ];
 
   return (
-    <div className="py-20">
+    <div className="py-20 font-['Arial','Helvetica',sans-serif]">
       <Container>
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold text-white mb-6">Features</h1>
-          <p className="text-xl text-zinc-400 mb-12">Everything you need for seamless communication, without the bloat.</p>
+          <h1 className="text-4xl font-bold text-[#F8FAFC] mb-6 font-['Space_Grotesk']">Features</h1>
+          <p className="text-xl text-[#94A3B8] mb-12">Everything you need for seamless communication, without the bloat.</p>
           
           <div className="space-y-8">
             {features.map((f, i) => (
-              <div key={i} className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
-                <h3 className="text-2xl font-semibold text-white mb-2">{f.title}</h3>
-                <p className="text-zinc-400">{f.desc}</p>
+              <div key={i} className="bg-[#0D1B2A] border border-[#1E3A5F] p-6 rounded-2xl">
+                <h3 className="text-2xl font-semibold text-[#F8FAFC] mb-2 font-['Space_Grotesk']">{f.title}</h3>
+                <p className="text-[#94A3B8]">{f.desc}</p>
               </div>
             ))}
           </div>

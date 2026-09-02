@@ -25,9 +25,9 @@ export default function AndroidMessagingApp() {
   ];
 
   const heroVisual = (
-    <div className="relative w-[280px] md:w-[320px] aspect-[1/2.15] rounded-[2.5rem] border border-white/10 bg-zinc-950 p-2 shadow-2xl">
-      <div className="absolute left-1/2 top-3 z-20 h-1.5 w-16 -translate-x-1/2 rounded-full bg-black/60" />
-      <div className="relative h-full w-full overflow-hidden rounded-[2rem] border border-white/5">
+    <div className="relative w-[280px] md:w-[320px] aspect-[1/2.15] rounded-[2.5rem] border border-[#1E3A5F] bg-[#0D1B2A] p-2 shadow-2xl">
+      <div className="absolute left-1/2 top-3 z-20 h-1.5 w-16 -translate-x-1/2 rounded-full bg-[#07111F]/60" />
+      <div className="relative h-full w-full overflow-hidden rounded-[2rem] border border-[#1E3A5F]">
         <Image src="/screenshots/call.webp" alt="KinChat Interface on Android" fill className="object-cover" />
       </div>
     </div>
